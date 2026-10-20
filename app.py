@@ -1,16 +1,3 @@
-"""Tiny demo web service for the Week 4 Docker lab.
-
-Endpoints
-  GET /health        -> {"status": "ok"}            (stateless)
-  GET /greet?name=X  -> {"message": "Hello, X!"}    (stateless)
-  GET /visit         -> {"visits": N}               (STATEFUL on purpose:
-                        the counter is stored in a file so we can see what
-                        happens to data when a container is removed)
-
-Configuration comes from environment variables (12-factor style):
-  APP_GREETING  default "Hello"
-  DATA_DIR      default "/data"   (where the visit counter file lives)
-"""
 import os
 from pathlib import Path
 
@@ -45,6 +32,14 @@ def visit():
     current += 1
     f.write_text(str(current))
     return jsonify(visits=current)
+
+
+@app.post("/reset")
+def reset():
+    f = _counter_file()
+    if f.exists():
+        f.unlink()
+    return jsonify(visits=0)
 
 
 if __name__ == "__main__":
