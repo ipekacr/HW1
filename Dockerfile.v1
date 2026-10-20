@@ -1,0 +1,15 @@
+# v1: the slow, naive version (for comparison in the lab)
+FROM python:3.12
+
+WORKDIR /app
+
+# Copies everything first, so ANY code change invalidates the cache
+# and pip install runs again.
+COPY . .
+
+RUN pip install -r requirements.txt
+
+EXPOSE 8000
+
+# Runs as root
+CMD ["python", "app.py"]
